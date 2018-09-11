@@ -29,7 +29,7 @@
 DecodeInputAvFormat::DecodeInputAvFormat()
 :m_format(NULL),m_videoId(-1), m_codecId(AV_CODEC_ID_NONE), m_isEos(true)
 {
-    av_register_all();
+    // av_register_all();
 
     av_init_packet(&m_packet);
 }
