@@ -178,88 +178,88 @@ static bool processCmdLine(int argc, char *argv[], TranscodeParams& para)
             para.m_encParams.temporalLayerNum = atoi(optarg);
             break;
         case 0:
-             switch (option_index) {
-                case 1:
-                    para.m_encParams.initQp = atoi(optarg);
-                    break;
-                case 2:
-                    para.m_encParams.rcMode = string_to_rc_mode(optarg);
-                    break;
-                case 3:
-                    para.m_encParams.ipPeriod = atoi(optarg);
-                    break;
-                case 4:
-                    para.m_encParams.intraPeriod = atoi(optarg);
-                    break;
-                case 5:
-                    para.m_encParams.numRefFrames= atoi(optarg);
-                    break;
-                case 6:
-                    para.m_encParams.idrInterval = atoi(optarg);
-                    break;
-                case 7:
-                    para.m_encParams.enableCabac = false;
-                    break;
-                case 8:
-                    para.m_encParams.enableDct8x8 = true;
-                    break;
-                case 9:
-                    para.m_encParams.enableDeblockFilter = false;
-                    break;
-                case 10:
-                    para.m_encParams.deblockAlphaOffsetDiv2 = atoi(optarg);
-                    break;
-                case 11:
-                    para.m_encParams.deblockBetaOffsetDiv2 = atoi(optarg);
-                    break;
-                case 12:
-                    para.m_encParams.diffQPIP = atoi(optarg);
-                    break;
-                case 13:
-                    para.m_encParams.diffQPIB = atoi(optarg);
-                    break;
-                case 14:
-                    para.m_encParams.priorityId = atoi(optarg);
-                    break;
-                case 15:
-                    para.m_encParams.m_encParamsVP9.referenceMode = atoi(optarg);
-                    break;
-                case 16:
-                    para.oWidth = atoi(optarg);
-                    break;
-                case 17:
-                    para.oHeight = atoi(optarg);
-                    break;
-                case 18:
-                    para.m_encParams.layerBitRate[0] = atoi(optarg) * 1024;//kbps to bps;
-                    break;
-                case 19:
-                    para.m_encParams.layerBitRate[1] = atoi(optarg) * 1024;//kbps to bps;
-                    break;
-                case 20:
-                    para.m_encParams.layerBitRate[2] = atoi(optarg) * 1024;//kbps to bps;
-                    break;
-                case 21:
-                    para.m_encParams.layerBitRate[3] = atoi(optarg) * 1024;//kbps to bps;
-                    break;
-                case 22:
-                    para.m_encParams.enableLowPower = true;
-                    break;
-                case 23:
-                    para.m_encParams.targetPercentage = atoi(optarg);
-                    break;
-                case 24:
-                    para.m_encParams.windowSize = atoi(optarg);
-                    break;
-                case 25:
-                    para.m_encParams.initBufferFullness = atoi(optarg);
-                    break;
-                case 26:
-                    para.m_encParams.bufferSize = atoi(optarg);
-                    break;
-                case 27:
-                    para.m_encParams.qualityLevel = atoi(optarg);
-                    break;
+            switch (option_index) {
+            case 1:
+                para.m_encParams.initQp = atoi(optarg);
+                break;
+            case 2:
+                para.m_encParams.rcMode = string_to_rc_mode(optarg);
+                break;
+            case 3:
+                para.m_encParams.ipPeriod = atoi(optarg);
+                break;
+            case 4:
+                para.m_encParams.intraPeriod = atoi(optarg);
+                break;
+            case 5:
+                para.m_encParams.numRefFrames= atoi(optarg);
+                break;
+            case 6:
+                para.m_encParams.idrInterval = atoi(optarg);
+                break;
+            case 7:
+                para.m_encParams.enableCabac = false;
+                break;
+            case 8:
+                para.m_encParams.enableDct8x8 = true;
+                break;
+            case 9:
+                para.m_encParams.enableDeblockFilter = false;
+                break;
+            case 10:
+                para.m_encParams.deblockAlphaOffsetDiv2 = atoi(optarg);
+                break;
+            case 11:
+                para.m_encParams.deblockBetaOffsetDiv2 = atoi(optarg);
+                break;
+            case 12:
+                para.m_encParams.diffQPIP = atoi(optarg);
+                break;
+            case 13:
+                para.m_encParams.diffQPIB = atoi(optarg);
+                break;
+            case 14:
+                para.m_encParams.priorityId = atoi(optarg);
+                break;
+            case 15:
+                para.m_encParams.m_encParamsVP9.referenceMode = atoi(optarg);
+                break;
+            case 16:
+                para.oWidth = atoi(optarg);
+                break;
+            case 17:
+                para.oHeight = atoi(optarg);
+                break;
+            case 18:
+                para.m_encParams.layerBitRate[0] = atoi(optarg) * 1024;//kbps to bps;
+                break;
+            case 19:
+                para.m_encParams.layerBitRate[1] = atoi(optarg) * 1024;//kbps to bps;
+                break;
+            case 20:
+                para.m_encParams.layerBitRate[2] = atoi(optarg) * 1024;//kbps to bps;
+                break;
+            case 21:
+                para.m_encParams.layerBitRate[3] = atoi(optarg) * 1024;//kbps to bps;
+                break;
+            case 22:
+                para.m_encParams.enableLowPower = true;
+                break;
+            case 23:
+                para.m_encParams.targetPercentage = atoi(optarg);
+                break;
+            case 24:
+                para.m_encParams.windowSize = atoi(optarg);
+                break;
+            case 25:
+                para.m_encParams.initBufferFullness = atoi(optarg);
+                break;
+            case 26:
+                para.m_encParams.bufferSize = atoi(optarg);
+                break;
+            case 27:
+                para.m_encParams.qualityLevel = atoi(optarg);
+                break;
             }
         }
     }
