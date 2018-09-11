@@ -49,6 +49,8 @@ EncodeParams::EncodeParams()
     , initBufferFullness(0)
     , bufferSize(0)
     , qualityLevel(VIDEO_PARAMS_QUALITYLEVEL_NONE)
+    , resetBitRate(0)
+    , resetBitRateInterval(0)
 {
     memset(layerBitRate, 0, sizeof(layerBitRate));
 }
@@ -91,8 +93,15 @@ void VppOutputEncode::initOuputBuffer()
 
 static void setEncodeParam(const SharedPtr<IVideoEncoder>& encoder,
     int width, int height, const EncodeParams* encParam,
-    const char* mimeType, uint32_t fourcc)
+    const char* mimeType, uint32_t fourcc, uint32_t frameCount)
 {
+    if (frameCount &&
+        (!encParam->resetBitRate ||
+         !encParam->resetBitRateInterval ||
+         (frameCount % encParam->resetBitRateInterval) ||
+         (encParam->resetBitRate == encParam->bitRate)))
+        return;
+
     //configure encoding parameters
     VideoParamsCommon encVideoParams;
     encVideoParams.size = sizeof(VideoParamsCommon);
@@ -107,7 +116,12 @@ static void setEncodeParam(const SharedPtr<IVideoEncoder>& encoder,
     //picture type and bitrate
     encVideoParams.intraPeriod = encParam->intraPeriod;
     encVideoParams.ipPeriod = encParam->ipPeriod;
-    encVideoParams.rcParams.bitRate = encParam->bitRate;
+
+    if (!frameCount)
+        encVideoParams.rcParams.bitRate = encParam->bitRate;
+    else
+        encVideoParams.rcParams.bitRate = encParam->resetBitRate;
+
     encVideoParams.rcParams.initQP = encParam->initQp;
     encVideoParams.rcParams.diffQPIP = encParam->diffQPIP;
     encVideoParams.rcParams.diffQPIB = encParam->diffQPIB;
@@ -200,11 +214,19 @@ bool VppOutputEncode::config(NativeDisplay& nativeDisplay, const EncodeParams* e
         return false;
     m_encoder->setNativeDisplay(&nativeDisplay);
     m_mime = m_output->getMimeType();
-    setEncodeParam(m_encoder, m_width, m_height, encParam, m_mime, m_fourcc);
+    setEncodeParam(m_encoder, m_width, m_height, encParam, m_mime, m_fourcc, 0);
 
     Encode_Status status = m_encoder->start();
     assert(status == ENCODE_SUCCESS);
     initOuputBuffer();
+    return true;
+}
+
+bool VppOutputEncode::resetParams(uint32_t frameCount, const EncodeParams* encParam)
+{
+    m_mime = m_output->getMimeType();
+    setEncodeParam(m_encoder, m_width, m_height, encParam, m_mime, m_fourcc, frameCount);
+
     return true;
 }
 

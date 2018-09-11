@@ -68,6 +68,8 @@ static void print_help(const char* app)
            "JPEG valid range[1, 100], HEVC|AVC|VP8|VP9 valid range[%d, %d], "
            "a value of 0 means CODEC will use its own internal default value> "
            "optional\n", VIDEO_PARAMS_QUALITYLEVEL_NONE, VIDEO_PARAMS_QUALITYLEVEL_MAX);
+    printf("   --reset-bitrate <reset bitrate> optional\n");
+    printf("   --reset-bitrate-internal <reset bitrate> optional\n");
     printf("   VP9 encoder specific options:\n");
     printf("   --refmode <VP9 Reference frames mode (default 0 last(previous), "
            "gold/alt (previous key frame) | 1 last (previous) gold (one before "
@@ -130,6 +132,8 @@ static bool processCmdLine(int argc, char *argv[], TranscodeParams& para)
         { "vbv-buffer-fullness", required_argument, NULL, 0 },
         { "vbv-buffer-size", required_argument, NULL, 0 },
         { "quality-level", required_argument, NULL, 0 },
+        { "reset-bitrate", required_argument, NULL, 0 },
+        { "reset-bitrate-interval", required_argument, NULL, 0 },
         { NULL, no_argument, NULL, 0 }
     };
     int option_index;
@@ -260,6 +264,12 @@ static bool processCmdLine(int argc, char *argv[], TranscodeParams& para)
             case 27:
                 para.m_encParams.qualityLevel = atoi(optarg);
                 break;
+            case 28:
+                para.m_encParams.resetBitRate = atoi(optarg) * 1024; // kbps to bps
+                break;
+            case 29:
+                para.m_encParams.resetBitRateInterval = atoi(optarg);
+                break;
             }
         }
     }
@@ -301,6 +311,19 @@ static bool processCmdLine(int argc, char *argv[], TranscodeParams& para)
         para.oWidth = para.iWidth;
     if (!para.oHeight)
         para.oHeight = para.iHeight;
+
+    if ((para.m_encParams.resetBitRate && !para.m_encParams.resetBitRateInterval) ||
+        (!para.m_encParams.resetBitRate && para.m_encParams.resetBitRateInterval)) {
+        fprintf(stderr, "Please set --reset-bitrate and --reset-bitrate-interval together\n");
+        return false;
+    }
+
+    if (para.m_encParams.resetBitRate &&
+        para.m_encParams.resetBitRateInterval &&
+        (para.m_encParams.resetBitRate == para.m_encParams.bitRate)) {
+        fprintf(stderr, "Please set a different reset bitrate\n");
+        return false;
+    }
 
     return true;
 }
@@ -431,6 +454,15 @@ public:
             if(!m_output->output(dest))
                 break;
             count++;
+
+            {
+                SharedPtr<VppOutputEncode> outputEncode = DynamicPointerCast<VppOutputEncode>(m_output);
+
+                if (outputEncode) {
+                    outputEncode->resetParams(count, &m_cmdParam.m_encParams);
+                }
+            }
+
             fps.addFrame();
             if(count >= m_cmdParam.frameCount)
                 break;

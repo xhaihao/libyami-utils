@@ -58,6 +58,8 @@ public:
     unsigned int initBufferFullness; /* in bits */
     unsigned int bufferSize; /* in bits */
     uint32_t qualityLevel;
+    int32_t resetBitRate;
+    int32_t resetBitRateInterval;
 };
 
 class TranscodeParams
@@ -82,6 +84,7 @@ public:
     virtual bool output(const SharedPtr<VideoFrame>& frame);
     virtual ~VppOutputEncode(){}
     bool config(NativeDisplay& nativeDisplay, const EncodeParams* encParam = NULL);
+    bool resetParams(uint32_t frameCount, const EncodeParams* encParam = NULL);
 protected:
     virtual bool init(const char* outputFileName, uint32_t fourcc, int width,
         int height, const char* codecName, int fps = 30);
